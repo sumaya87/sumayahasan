@@ -4,20 +4,18 @@ namespace App\Controller;
 
 use App\Entity\ResumeBio;
 use App\Entity\ResumeCertificates;
+use App\Entity\ResumeDownloads;
 use App\Entity\ResumeEducations;
 use App\Entity\ResumeExperiences;
 use App\Entity\ResumeSkills;
 use App\Entity\ResumeSkillTypes;
 use App\Entity\ResumeSocials;
 use App\Entity\ResumeTestScores;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class WelcomeController extends Controller
 {
-    /**
-     * @Route("/", name="resume_bundle_welcome")
-     */
+
     public function index()
     {
         $em = $this->getDoctrine()->getManager();
@@ -28,6 +26,7 @@ class WelcomeController extends Controller
         $certifications = $em->getRepository(ResumeCertificates::class)->findBy(['status' => true]);
         $testScores = $em->getRepository(ResumeTestScores::class)->findBy(['status' => true]);
         $skillTypes = $em->getRepository(ResumeSkillTypes::class)->findBy(['status' => true]);
+        $downloads = $em->getRepository(ResumeDownloads::class)->findBy(['status' => true], ['fileOrder' => 'ASC']);
 
         $data = [
             'first_name'        => $bio->getFirstName(),
@@ -42,7 +41,8 @@ class WelcomeController extends Controller
             'educations'        => [],
             'skills'            => [],
             'certificates'      => [],
-            'test_scores'       => []
+            'test_scores'       => [],
+            'downloads'       => []
         ];
 
         foreach ($socials as $social){
@@ -105,9 +105,23 @@ class WelcomeController extends Controller
             ];
         }
 
+        foreach ($downloads as $download){
+            $data['downloads'][] = [
+                'name'                  =>  $download->getName(),
+                'location'              =>  $download->getFileLocation(),
+                'type'                  =>  $download->getFileType(),
+                'order'                 =>  $download->getFileOrder()
+            ];
+        }
+
         return $this->render('Resume/index.html.twig', [
             'controller_name' => 'WelcomeController',
             'data' => $data
         ]);
     }
+
+//    public function export()
+//    {
+//        die("test");
+//    }
 }
