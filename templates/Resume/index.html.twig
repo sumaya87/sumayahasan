@@ -216,9 +216,12 @@
         <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="export">
             <div class="my-auto">
                 <h2 class="mb-5">Download</h2>
+                {% for download in data.downloads %}
+                    {% set location = 'img/'~download.type~'.png' %}
                 <p>
-                    <a href="{{ path('export') }}" target="_blank"><img src="{{ asset('img/pdf.png') }}"></a>
+                    <a href="{{ download.location }}" target="_blank"><img src="{{ asset(location) }}"></a>&nbsp;{{ download.name }}
                 </p>
+                {% endfor %}
             </div>
         </section>
 
